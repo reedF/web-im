@@ -1,7 +1,7 @@
 package com.reed.webim.websocket.stomp.message;
 
 /**
- * Created by lincoln on 16-10-25
+ * 
  */
 public class ToUserMessage {
     private String userId;
