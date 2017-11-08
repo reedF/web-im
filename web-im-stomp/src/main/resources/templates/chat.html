@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset="UTF-8" />
+<head>
+    <title>Home</title>
+    <script th:src="@{sockjs.min.js}"></script>
+    <script th:src="@{stomp.min.js}"></script>
+    <script th:src="@{jquery.js}"></script>
+</head>
+<body>
+<p>
+    聊天室
+</p>
+
+<form id="wiselyForm">
+	<label>输入接收者ID：</label><input type="text" id="userId" />
+	<br />
+	<textarea rows="4" cols="60" name="text"></textarea>
+    <input type="submit"/>
+</form>
+
+<script th:inline="javascript">
+    $('#wiselyForm').submit(function(e){
+        e.preventDefault();
+        var text = $('#wiselyForm').find('textarea[name="text"]').val();
+        var userId= $('#userId').val();
+        sendSpittle(userId,text);
+    });
+    //链接endpoint名称为 "/endpointChat" 的endpoint。
+    var sock = new SockJS("/endpointChat");
+    var stomp = Stomp.over(sock);
+    stomp.connect('guest', 'guest', function(frame) {
+
+        /* 订阅了/user/message 发送的消息,这里与在控制器的 convertAndSendToUser 定义的地址保持一致,
+         *  这里多用了一个/user,并且这个user 是必须的,使用user 才会发送消息到指定的用户。
+         *  */
+        stomp.subscribe("/user/*/message", handleNotification);
+    });
+
+
+
+    function handleNotification(message) {
+        $('#output').append("<b>Received: " + message.body + "</b><br/>")
+    }
+
+    function sendSpittle(userId,text) {
+    	//测试服务端两种路径
+    	if (userId % 2 == 0) {
+    		stomp.send("/app/p2p", {}, JSON.stringify({ 'userId': userId,'message': text }));
+    	} else {
+        	stomp.send("/app/cheat", {}, JSON.stringify({ 'userId': userId,'message': text }));
+    	}
+    }
+    $('#stop').click(function() {sock.close()});
+</script>
+
+<div id="output"></div>
+</body>
+</html>
