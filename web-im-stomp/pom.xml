@@ -10,7 +10,6 @@
 	</parent>
 	<groupId>com.reed.webim.websocket</groupId>
 	<artifactId>web-im-stomp</artifactId>
-	<version>1.0-SNAPSHOT</version>
 	<name>web-im-stomp</name>
 	<url>http://maven.apache.org</url>
 	<properties>
@@ -27,4 +26,5 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
+
 </project>

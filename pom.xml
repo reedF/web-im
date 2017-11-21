@@ -50,7 +50,6 @@
 
 
 	<build>
-
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -87,17 +86,16 @@
 							<goal>read-project-properties</goal>
 						</goals>
 						<configuration>
-							<!-- <files>
-								<file>check-dependency.properties</file>
-							</files> -->
+							<!-- <files> <file>check-dependency.properties</file> </files> -->
 							<urls>
 								<!-- <url>file:///${basedir}/check-dependency.properties</url> -->
-							    <url>https://raw.githubusercontent.com/reedF/web-im/master/check-dependency.properties</url>
+								<url>https://raw.githubusercontent.com/reedF/web-im/master/check-dependency.properties</url>
 							</urls>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+
 			<!-- dependency:analyze http://maven.apache.org/plugins/maven-dependency-plugin/analyze-only-mojo.html -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -115,7 +113,7 @@
 							<usedDependencies>
 								<!-- <usedDependency>log4j:log4j</usedDependency> -->
 								<!-- <usedDependency>org.springframework.boot:spring-boot-devtools</usedDependency> -->
-								${required-jar}								
+								${required-jar}
 							</usedDependencies>
 						</configuration>
 					</execution>
@@ -143,5 +141,34 @@
 			</plugin>
 		</plugins>
 
+		<pluginManagement>
+			<plugins>
+				<!-- reslove exception: Plugin execution not covered by lifecycle configuration -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<goals>
+											<goal>analyze-only</goal>
+										</goals>
+										<versionRange>[2.10,)</versionRange>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 </project>
