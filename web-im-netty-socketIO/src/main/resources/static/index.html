@@ -38,6 +38,7 @@ body {
 
 <script src="js/socket.io.js"></script>
 <script src="js/moment.min.js"></script>
+<script src="js/Math.uuid.js"></script>
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 
 <script>
@@ -46,7 +47,7 @@ var socket;
 	function initConnect() {
 		var clientid = $('#sourceClient').val();;
 		var targetClientId = $('#targetClient').val();;
-		socket = io.connect('http://localhost:8080?clientid=' + clientid);
+		socket = io.connect('http://localhost:8080?clientid=' + clientid,{'forceNew':true });
 		socket
 				.on(
 						'connect',
@@ -104,7 +105,7 @@ var socket;
 <body>
 
 	<h1>Netty-socketio Demo Chat</h1>
-
+	<h4>同一个浏览器开启多窗口时，使用的是相同的websocket连接，如需测试P2P通信，可使用多个浏览器开启窗口</h4>
 	<br />
 
 	<div id="console" class="well"></div>
