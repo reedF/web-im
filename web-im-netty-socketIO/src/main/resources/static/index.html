@@ -45,9 +45,9 @@ body {
 
 var socket;
 	function initConnect() {
-		var clientid = $('#sourceClient').val();;
-		var targetClientId = $('#targetClient').val();;
-		socket = io.connect('http://localhost:8080?clientid=' + clientid,{'forceNew':true });
+		var clientid = $('#sourceClient').val();
+		var targetClientId = $('#targetClient').val();		
+		socket = io.connect('http://localhost:8080/ns1?ns=ns1&clientid=' + clientid,{'forceNew':true });
 		socket
 				.on(
 						'connect',
@@ -84,7 +84,11 @@ var socket;
 			msgType : 'chat',
 			msgContent : message
 		};
-		socket.emit('messageevent', jsonObject);
+		//send msg using ack function
+		socket.emit('messageevent', jsonObject, function(arg1, data) {
+			output('<span class="username-msg">' + arg1 + data.sourceClientId
+					+ ':</span> ' + data.msgContent);
+        });
 	}
 
 	function output(message) {
@@ -114,7 +118,7 @@ var socket;
 		<input id="sourceClient" class="input-xlarge" type="text"
 			placeholder="sourceClient..." />
 		<input id="targetClient" class="input-xlarge" type="text" placeholder="targetClient..." />
-		<button type="button" onClick="initConnect()" class="btn" id="send">Connect</button>
+		<button type="button" onClick="initConnect()" class="btn" id="connect">Connect</button>
 		<button type="button" onClick="sendDisconnect()" class="btn">Disconnect</button>
 		<br />
 		<input id="msg" class="input-xlarge" type="text"

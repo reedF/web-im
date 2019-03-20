@@ -1,8 +1,6 @@
 package com.reed.webim.netty.socketio.server;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -12,6 +10,8 @@ import com.corundumstudio.socketio.Configuration;
 import com.corundumstudio.socketio.HandshakeData;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.annotation.SpringAnnotationScanner;
+import com.corundumstudio.socketio.listener.DefaultExceptionListener;
+import com.corundumstudio.socketio.store.RedissonStoreFactory;
 import com.reed.webim.netty.socketio.config.NettySocketioServerConfig;
 
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +23,9 @@ public class NettySocketioServer {
 	@Autowired
 	private NettySocketioServerConfig nettyServerconfig;
 
+	@Autowired
+	private RedissonClient redisson;
+
 	private SocketIOServer server;
 
 	@Bean
@@ -32,7 +35,12 @@ public class NettySocketioServer {
 		config.setPort(nettyServerconfig.port);
 		config.setBossThreads(nettyServerconfig.bossThreadNum);
 		config.setWorkerThreads(nettyServerconfig.workerThreadNum);
-		//config.setStoreFactory(new HazelcastStoreFactory());
+		config.setExceptionListener(new DefaultExceptionListener());
+		// config.setStoreFactory(new HazelcastStoreFactory());
+		// RedissonStoreFactory:using redis to store client
+		if (nettyServerconfig.enableRedissonStore) {
+			config.setStoreFactory(new RedissonStoreFactory(redisson));
+		}
 		// 该处可以用来进行身份验证
 		config.setAuthorizationListener(new AuthorizationListener() {
 			@Override

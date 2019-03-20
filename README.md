@@ -14,3 +14,6 @@ https://github.com/mrniko/netty-socketio
 2.java连接netty-socketio  
 https://github.com/socketio/socket.io-client-java  
 
+
+#Redisson
+https://www.jianshu.com/p/2b19dec72ab0  

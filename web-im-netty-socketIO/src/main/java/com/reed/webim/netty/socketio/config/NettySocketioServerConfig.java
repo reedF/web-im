@@ -17,4 +17,6 @@ public class NettySocketioServerConfig {
 	public int bossThreadNum;
 
 	public int workerThreadNum;
+	//是否使用redis保存netty连接
+	public boolean enableRedissonStore;
 }

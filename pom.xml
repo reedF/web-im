@@ -137,7 +137,8 @@
 							<goal>check</goal>
 						</goals>
 						<configuration>
-							<failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
+							<!-- true:will check dependency,or do not check -->
+							<failBuildInCaseOfConflict>false</failBuildInCaseOfConflict>
 							<!-- <exceptions> <exception> <groupId>ch.qos.logback</groupId> <artifactId>logback-core</artifactId> 
 								<expectedVersion>1.1.8</expectedVersion> <resolvedVersion>1.1.7</resolvedVersion> 
 								</exception> </exceptions> -->
