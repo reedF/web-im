@@ -23,9 +23,11 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class BaseAbstractHandler {
+	
 	//querys
 	public static final String QUERY_PARAMS_CLIENTID = "clientid";
 	public static final String QUERY_PARAMS_ROOM = "room";
+	public static final String QUERY_PARAMS_NAMESPACE = "ns";
 	
 	// endpoints
 	public final static String ENDPOINT_P2P = "messageevent";
@@ -126,7 +128,7 @@ public abstract class BaseAbstractHandler {
 	public boolean addNs(SocketIOClient client) {
 		boolean r = false;
 		String defaultNs = client.getNamespace().getName();
-		String ns = client.getHandshakeData().getSingleUrlParam("ns");
+		String ns = client.getHandshakeData().getSingleUrlParam(QUERY_PARAMS_NAMESPACE);
 		if (!defaultNs.equals(ns)) {
 			if (!StringUtils.isEmpty(ns)) {
 				ns = "/" + ns;
