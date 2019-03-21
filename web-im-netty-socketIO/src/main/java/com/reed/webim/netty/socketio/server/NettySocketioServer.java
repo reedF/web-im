@@ -32,7 +32,7 @@ public class NettySocketioServer {
 	@Bean
 	public SocketIOServer socketIOServer() {
 		Configuration config = new Configuration();
-		// config.setHostname(nettyServerconfig.host);
+		config.setHostname(nettyServerconfig.host);
 		config.setPort(nettyServerconfig.port);
 		config.setBossThreads(nettyServerconfig.bossThreadNum);
 		config.setWorkerThreads(nettyServerconfig.workerThreadNum);

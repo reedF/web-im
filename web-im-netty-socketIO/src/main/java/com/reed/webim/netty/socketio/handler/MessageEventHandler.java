@@ -28,12 +28,12 @@ public class MessageEventHandler extends BaseAbstractHandler {
 		boolean r = addNs(client);
 		if (r) {
 			client.disconnect();
-			return;
+		} else {
+			String clientId = client.getHandshakeData().getSingleUrlParam(QUERY_PARAMS_CLIENTID);
+			UUID sessionId = client.getSessionId();
+			saveSession(client);
+			joinRoom(client);
+			log.info("======connected for client:{},sessionId:{}======", clientId, sessionId);
 		}
-		String clientId = client.getHandshakeData().getSingleUrlParam("clientid");
-		UUID sessionId = client.getSessionId();
-		saveSession(client);
-
-		log.info("======connected for client:{},sessionId:{}======", clientId, sessionId);
 	}
 }

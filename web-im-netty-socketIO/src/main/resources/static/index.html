@@ -51,7 +51,7 @@ var socket;
 	    //    transports: ['polling', 'websocket'],
 	    //    forceNew: true
 	    //});
-		socket = io.connect('http://localhost:8080/ns1?ns=ns1&clientid=' + clientid,{'forceNew':true });
+		socket = io.connect('http://localhost:8080/ns1?ns=ns1&room=test&clientid=' + clientid,{'forceNew':true });
 		socket
 				.on(
 						'connect',

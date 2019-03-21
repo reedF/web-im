@@ -22,7 +22,8 @@ import io.socket.emitter.Emitter;
  */
 public class TestNettySocketClient {
 
-	private static final String url = "http://localhost:8081/ns1?ns=ns1&clientid=3";
+	private static final String url = "http://localhost:8080/ns1?ns=ns1&clientid=3&room="
+			+ MessageEventHandler.ROOM_TAG_SERVICE;
 	// private static final String url = "http://localhost:8081/?clientid=3";
 
 	public static void main(String[] args) {
@@ -33,7 +34,7 @@ public class TestNettySocketClient {
 		// options.reconnectionAttempts = 2;
 		options.reconnectionDelay = 1000;// 失败重连的时间间隔
 		options.timeout = 500;// 连接超时时间(ms)
-		//options.query = "ns=ns1&clientid=3";
+		// options.query = "ns=ns1&clientid=3";
 		// options.decoder=;
 		try {
 			Socket socket = IO.socket(url, options);
@@ -108,14 +109,22 @@ public class TestNettySocketClient {
 			socket.on(MessageEventHandler.ENDPOINT_P2P, new Emitter.Listener() {
 				@Override
 				public void call(Object... args) {
+					//check if has ackCallback
+					if (args != null && args.length > 1) {
+						if (args[args.length - 1] instanceof Ack) {
+							Ack ack = (Ack) args[args.length - 1];
+							// 通知发送方的回调方法执行：BaseAbstractHandler.sendMsgByP2p
+							ack.call("Data received by client on " + new Date() + ",data is:" + args[0]);
+						}
+					}
 					System.out.println("ACK-from-client");
-					Ack ack = (Ack) args[args.length - 1];
-					ack.call("Data received by client on" + new Date());
-
+					for (Object obj : args) {
+						System.out.println(obj);
+					}
 				}
 			});
 
-			//send msg,and ack from server
+			// send msg,and ack from server
 			socket.emit(MessageEventHandler.ENDPOINT_P2P, JSON.toJSON(msg), new Ack() {
 				@Override
 				public void call(Object... args) {
