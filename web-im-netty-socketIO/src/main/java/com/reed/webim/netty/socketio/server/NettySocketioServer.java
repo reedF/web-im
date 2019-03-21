@@ -13,6 +13,7 @@ import com.corundumstudio.socketio.annotation.SpringAnnotationScanner;
 import com.corundumstudio.socketio.listener.DefaultExceptionListener;
 import com.corundumstudio.socketio.store.RedissonStoreFactory;
 import com.reed.webim.netty.socketio.config.NettySocketioServerConfig;
+import com.reed.webim.netty.socketio.handler.BusinessExceptionListener;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,6 +37,7 @@ public class NettySocketioServer {
 		config.setBossThreads(nettyServerconfig.bossThreadNum);
 		config.setWorkerThreads(nettyServerconfig.workerThreadNum);
 		config.setExceptionListener(new DefaultExceptionListener());
+		//config.setExceptionListener(new BusinessExceptionListener());
 		// config.setStoreFactory(new HazelcastStoreFactory());
 		// RedissonStoreFactory:using redis to store client
 		if (nettyServerconfig.enableRedissonStore) {

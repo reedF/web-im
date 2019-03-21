@@ -46,7 +46,11 @@ body {
 var socket;
 	function initConnect() {
 		var clientid = $('#sourceClient').val();
-		var targetClientId = $('#targetClient').val();		
+		var targetClientId = $('#targetClient').val();	
+		//socket = io('http://localhost:8080/ns1?ns=ns1&clientid=' + clientid, {
+	    //    transports: ['polling', 'websocket'],
+	    //    forceNew: true
+	    //});
 		socket = io.connect('http://localhost:8080/ns1?ns=ns1&clientid=' + clientid,{'forceNew':true });
 		socket
 				.on(

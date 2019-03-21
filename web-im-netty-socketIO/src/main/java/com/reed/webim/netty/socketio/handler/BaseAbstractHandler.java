@@ -23,24 +23,20 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class BaseAbstractHandler {
 	public final static String ENDPOINT_P2P = "messageevent";
 	public final static String ENDPOINT_BROADCAST = "broadcast";
+	public final static String ENDPOINT_CLIENT_DISPATCH = "clientdispatch";
 
 	public Map<String, UUID> sessions = new HashMap<>();
 
 	@Autowired
 	public SocketIOServer server;
 
+	// no need to add namespace
 	// 添加connect事件，当客户端发起连接时调用，本文中将clientid与sessionid存入内存,方便后面发送消息时查找到对应的目标client,
 	@OnConnect
 	public void onConnect(SocketIOClient client) {
-		boolean r = addNs(client);
-		if (r) {
-			client.disconnect();
-			return;
-		}
 		String clientId = client.getHandshakeData().getSingleUrlParam("clientid");
 		UUID sessionId = client.getSessionId();
-		sessions.put(clientId, sessionId);
-
+		saveSession(client);
 		log.info("======connected for client:{},sessionId:{}======", clientId, sessionId);
 	}
 
@@ -76,20 +72,54 @@ public abstract class BaseAbstractHandler {
 	}
 
 	/**
+	 * 对内：服务端->客户端消息路由入口，分布式下接收其他broker广播来的消息，判断session是否在本机内，并发送给相应client
+	 * @param client
+	 * @param ackRequest
+	 * @param data
+	 */
+	@OnEvent(value = ENDPOINT_CLIENT_DISPATCH)
+	public void onClientDispath(SocketIOClient client, AckRequest ackRequest, MessageInfo data) {
+		// check is ack requested by client,but it's not required check
+		if (ackRequest.isAckRequested()) {
+			// send ack response with data to client
+			ackRequest.sendAckData("ACK:", data);
+		}
+
+		UUID uuid = sessions.get(data.getTargetClientId());
+		if (uuid != null) {
+			server.getNamespace(client.getNamespace().getName()).getClient(uuid).sendEvent(ENDPOINT_P2P, data);
+		}
+
+		log.info("========client dispatch msg:{}===========", data);
+	}
+
+	/**
 	 * 根据client在url中传递的参数ns("host:port/{namespaceValue}?ns=namespaceValue")，判断是否动态创建新的namespace
 	 * @param client
 	 */
 	public boolean addNs(SocketIOClient client) {
 		boolean r = false;
-		String ns = "/" + client.getHandshakeData().getSingleUrlParam("ns");
-		if (server.getNamespace(ns) == null) {
-			SocketIONamespace namespace = server.addNamespace(ns);
-			NamespaceHandler handler = new NamespaceHandler(ns);
-			handler.server = server;
-			namespace.addListeners(handler);
-			r = true;
+		String defaultNs = client.getNamespace().getName();
+		String ns = client.getHandshakeData().getSingleUrlParam("ns");
+		if (!defaultNs.equals(ns)) {
+			if (!StringUtils.isEmpty(ns)) {
+				ns = "/" + ns;
+				if (server.getNamespace(ns) == null) {
+					SocketIONamespace namespace = server.addNamespace(ns);
+					NamespaceHandler handler = new NamespaceHandler(ns);
+					handler.server = server;
+					namespace.addListeners(handler);
+					r = true;
+				}
+			}
 		}
 		return r;
+	}
+
+	public void saveSession(SocketIOClient client) {
+		String clientId = client.getHandshakeData().getSingleUrlParam("clientid");
+		UUID sessionId = client.getSessionId();
+		sessions.put(clientId, sessionId);
 	}
 
 	/**
@@ -100,19 +130,29 @@ public abstract class BaseAbstractHandler {
 	 */
 	private void sendMsgByP2p(SocketIOClient client, AckRequest request, MessageInfo sendData) {
 		UUID uuid = sessions.get(sendData.getTargetClientId());
+		//local session
 		if (uuid != null) {
-			server.getClient(uuid).sendEvent(ENDPOINT_P2P, sendData);
+			server.getNamespace(client.getNamespace().getName()).getClient(uuid).sendEvent(ENDPOINT_P2P, sendData);
 		} else {
-			// sendMsgByBroadcast(sendData);
-			log.warn("=====Local server can not find client:{}=====", sendData.getTargetClientId());
+			sendMsgByClientDispatch(client, sendData);
+			log.info("=====Client:{}, not on the server:{}=====", sendData.getTargetClientId(),
+					server.getConfiguration().getHostname() + ":" + server.getConfiguration().getPort());
 		}
 	}
 
 	/**
-	 * broadcast
-	 * @param sendData
+	 * broadcast to the same namespace's clients
 	 */
 	private void sendMsgByBroadcast(SocketIOClient client, MessageInfo sendData) {
 		client.getNamespace().getBroadcastOperations().sendEvent(ENDPOINT_BROADCAST, sendData);
+	}
+
+	/**
+	 * dispatch msg to other borkers
+	 * @param client
+	 * @param sendData
+	 */
+	private void sendMsgByClientDispatch(SocketIOClient client, MessageInfo sendData) {
+		client.getNamespace().getBroadcastOperations().sendEvent(ENDPOINT_CLIENT_DISPATCH, sendData);
 	}
 }
