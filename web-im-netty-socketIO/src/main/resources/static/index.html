@@ -52,24 +52,40 @@ var socket;
 	    //    forceNew: true
 	    //});
 		socket = io.connect('http://localhost:8080/ns1?ns=ns1&room=test&clientid=' + clientid,{'forceNew':true });
-		socket
-				.on(
-						'connect',
-						function() {
+		socket.on(
+				'connect',
+					function() {
 							output('<span class="connect-msg">Client has connected to the server!</span>');
-						});
+				});
 
 		socket.on('messageevent', function(data) {
 			output('<span class="username-msg">' + data.sourceClientId
 					+ ':</span> ' + data.msgContent);
 		});
 
-		socket
-				.on(
-						'disconnect',
-						function() {
-							output('<span class="disconnect-msg">The client has disconnected!</span>');
-						});
+		socket.on(
+				'disconnect',
+				function() {
+					output('<span class="disconnect-msg">The client has disconnected!</span>');
+				});
+		
+		socket.on(
+				'connect_failed',
+				function() {
+					output('<span class="disconnect-msg">The client connecting failed!</span>');
+				});
+		
+		socket.on(
+				'reconnecting',
+				function() {
+					output('<span class="disconnect-msg">The client reconnecting.....</span>');
+				});
+		
+		socket.on(
+				'error',
+				function() {
+					output('<span class="disconnect-msg">The client has error!</span>');
+				});
 	}
 
 	function sendDisconnect() {
