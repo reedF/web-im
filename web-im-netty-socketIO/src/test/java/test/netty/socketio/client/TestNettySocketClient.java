@@ -22,7 +22,7 @@ import io.socket.emitter.Emitter;
  */
 public class TestNettySocketClient {
 
-	private static final String url = "http://localhost:8080/ns1?ns=ns1&clientid=3&room="
+	private static final String url = "http://localhost:8081/ns1?ns=ns1&clientid=3&room="
 			+ MessageEventHandler.ROOM_TAG_SERVICE;
 	// private static final String url = "http://localhost:8081/?clientid=3";
 

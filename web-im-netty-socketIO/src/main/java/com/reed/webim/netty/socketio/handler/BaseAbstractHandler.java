@@ -106,7 +106,7 @@ public abstract class BaseAbstractHandler {
 	 * @param data
 	 */
 	@OnEvent(value = ENDPOINT_CLIENT_DISPATCH)
-	public void onClientDispath(SocketIOClient client, AckRequest ackRequest, MessageInfo data) {
+	public void onClientDispatch(SocketIOClient client, AckRequest ackRequest, MessageInfo data) {
 		// check is ack requested by client,but it's not required check
 		if (ackRequest.isAckRequested()) {
 			// send ack response with data to client
