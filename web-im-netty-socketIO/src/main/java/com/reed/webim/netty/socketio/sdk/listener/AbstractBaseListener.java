@@ -10,7 +10,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 抽象消息接收者，封装消息接收到后client端发送给broker端的ackCallback，同时暴露业务方法doBusiness供业务方实现
+ * 抽象消息接收者，SDK使用方需继承本类并根据业务实现doBusiness方法
+ * 本类封装消息接收到后client端发送给broker端的ackCallback，同时暴露业务方法doBusiness供业务方实现
  * @author reed
  *
  */
