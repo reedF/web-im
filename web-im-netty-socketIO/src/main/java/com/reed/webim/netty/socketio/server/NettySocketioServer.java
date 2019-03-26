@@ -32,6 +32,8 @@ public class NettySocketioServer {
 	@Bean
 	public SocketIOServer socketIOServer() {
 		Configuration config = new Configuration();
+		//Access-Control-Allow-Origin
+		//config.setOrigin(":*:");
 		config.setHostname(nettyServerconfig.host);
 		config.setPort(nettyServerconfig.port);
 		config.setBossThreads(nettyServerconfig.bossThreadNum);

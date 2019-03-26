@@ -21,8 +21,8 @@ import io.socket.emitter.Emitter;
  * 在使用transports为polling时，无此问题
  */
 public class TestNettySocketClient {
-
-	private static final String url = "http://localhost:8081/ns1?ns=ns1&clientid=3&room="
+	//LB:http://vm/ns1?ns=ns1&clientid=3&room=
+	private static final String url = "http://localhost:8080/ns1?ns=ns1&clientid=3&room="
 			+ MessageEventHandler.ROOM_TAG_SERVICE;
 	// private static final String url = "http://localhost:8081/?clientid=3";
 
@@ -114,7 +114,8 @@ public class TestNettySocketClient {
 						if (args[args.length - 1] instanceof Ack) {
 							Ack ack = (Ack) args[args.length - 1];
 							// 通知发送方的回调方法执行：BaseAbstractHandler.sendMsgByP2p
-							ack.call("Data received by client on " + new Date() + ",data is:" + args[0]);
+							//ack.call("Data received by client on " + new Date() + ",data is:" + args[0]);
+							ack.call(args[0]);
 						}
 					}
 					System.out.println("ACK-from-client");

@@ -23,12 +23,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class BaseAbstractHandler {
-	
-	//querys
+
+	// querys
 	public static final String QUERY_PARAMS_CLIENTID = "clientid";
 	public static final String QUERY_PARAMS_ROOM = "room";
 	public static final String QUERY_PARAMS_NAMESPACE = "ns";
-	
+
 	// endpoints
 	public final static String ENDPOINT_P2P = "messageevent";
 	public final static String ENDPOINT_BROADCAST = "broadcast";
@@ -80,7 +80,7 @@ public abstract class BaseAbstractHandler {
 	@OnEvent(value = ENDPOINT_P2P)
 	public void onEvent(SocketIOClient client, AckRequest ackRequest, MessageInfo data) {
 		String targetClientId = data.getTargetClientId();
-		data.setMsgType("chat");
+
 		Collection<SocketIONamespace> ns = server.getAllNamespaces();
 		Collection<SocketIOClient> cs = server.getBroadcastOperations().getClients();
 
@@ -176,18 +176,19 @@ public abstract class BaseAbstractHandler {
 		if (uuid != null) {
 			// server.getNamespace(client.getNamespace().getName()).getClient(uuid).sendEvent(ENDPOINT_P2P,
 			// sendData);
-			
+
 			// ackCallback
 			server.getNamespace(client.getNamespace().getName()).getClient(uuid).sendEvent(ENDPOINT_P2P,
-					new AckCallback<String>(String.class) {
+					new AckCallback<MessageInfo>(MessageInfo.class) {
+						// 接收方将原数据sendData直接返回发送方，作为ack
 						@Override
-						public void onSuccess(String result) {
+						public void onSuccess(MessageInfo result) {
 							log.info("======ackCallback:{}======", result);
 						}
 					}, sendData);
 		} else {
 			sendMsgByClientDispatch(client, sendData);
-			log.info("=====Client:{}, not on the server:{}=====", sendData.getTargetClientId(),
+			log.info("=====Client:{}, not on the local server:{}=====", sendData.getTargetClientId(),
 					server.getConfiguration().getHostname() + ":" + server.getConfiguration().getPort());
 		}
 	}
@@ -205,7 +206,15 @@ public abstract class BaseAbstractHandler {
 	 * @param sendData
 	 */
 	private void sendMsgByClientDispatch(SocketIOClient client, MessageInfo sendData) {
-		// String room = client.getHandshakeData().getSingleUrlParam("room");
 		client.getNamespace().getRoomOperations(ROOM_TAG_BROKER).sendEvent(ENDPOINT_CLIENT_DISPATCH, sendData);
+	}
+
+	/**
+	 * send msg from client to backend target service
+	 * @param client
+	 * @param sendData
+	 */
+	private void sendMsgByClient2TargetService(SocketIOClient client, MessageInfo sendData) {
+		client.getNamespace().getRoomOperations(ROOM_TAG_SERVICE).sendEvent(ENDPOINT_CLIENT_DISPATCH, sendData);
 	}
 }
