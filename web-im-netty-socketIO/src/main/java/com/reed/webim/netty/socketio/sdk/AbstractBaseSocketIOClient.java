@@ -47,6 +47,7 @@ public abstract class AbstractBaseSocketIOClient implements NettySocketIOClient 
 		}
 	}
 
+	//TODO 返回值r在isAck=true时，由于ack由异步线程执行，ack.isResult()在当前线程内获取的值存在延迟，导致r取值错误
 	@Override
 	public boolean sendMsg(String endPoint, MessageInfo msg, boolean isAck) {
 		boolean r = false;
