@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSON;
+import com.reed.webim.netty.socketio.handler.BaseAbstractHandler;
 import com.reed.webim.netty.socketio.pojo.MessageInfo;
 import com.reed.webim.netty.socketio.sdk.ack.BaseMsgAck;
 import com.reed.webim.netty.socketio.sdk.ack.MsgSenderAck;
@@ -22,9 +23,13 @@ public abstract class AbstractBaseSocketIOClient implements NettySocketIOClient 
 
 	private final AbstractBaseListener listener;
 
+	private String clientId;
+
 	private Socket socket;
 
-	public AbstractBaseSocketIOClient(SocketIOClientConfig clientConfig, AbstractBaseListener listener) {
+	public AbstractBaseSocketIOClient(String clientId, SocketIOClientConfig clientConfig,
+			AbstractBaseListener listener) {
+		this.clientId = clientId;
 		this.clientConfig = clientConfig;
 		this.listener = listener;
 	}
@@ -76,8 +81,9 @@ public abstract class AbstractBaseSocketIOClient implements NettySocketIOClient 
 			// options.reconnectionAttempts = 2;
 			options.reconnectionDelay = clientConfig.reconnectionDelay;
 			options.timeout = clientConfig.timeout;
+			String url = makeUpUrl(clientConfig);
 			try {
-				socket = IO.socket(clientConfig.url, options);
+				socket = IO.socket(url, options);
 
 				socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
 					@Override
@@ -131,5 +137,23 @@ public abstract class AbstractBaseSocketIOClient implements NettySocketIOClient 
 				log.error("SocketIO-client-java-SDK connect error:{}", e);
 			}
 		}
+	}
+
+	public String makeUpUrl(SocketIOClientConfig clientConfig) {
+		String paramNs = "?" + BaseAbstractHandler.QUERY_PARAMS_NAMESPACE + "=";
+		String paramRoom = "&" + BaseAbstractHandler.QUERY_PARAMS_ROOM + "=";
+		StringBuffer url = new StringBuffer(clientConfig.url.endsWith("/") ? clientConfig.url : clientConfig.url + "/");
+		String ns = paramNs;
+		if (!StringUtils.isEmpty(clientConfig.nameSpace)) {
+			String nsValue = clientConfig.nameSpace;
+			if (nsValue.startsWith("/")) {
+				nsValue = nsValue.replace("/", "");
+			}
+			ns = nsValue + ns + nsValue;
+		}
+		String room = StringUtils.isEmpty(clientConfig.channel) ? paramRoom : paramRoom + clientConfig.channel;
+		url.append(ns + "&" + BaseAbstractHandler.QUERY_PARAMS_CLIENTID + "=" + clientId);
+		url.append(room);
+		return url.toString();
 	}
 }

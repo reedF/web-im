@@ -9,8 +9,8 @@ import com.reed.webim.netty.socketio.sdk.listener.AbstractBaseListener;
  */
 public class BaseSocketClient extends AbstractBaseSocketIOClient {
 
-	public BaseSocketClient(SocketIOClientConfig clientConfig, AbstractBaseListener listener) {
-		super(clientConfig, listener);
+	public BaseSocketClient(String clientId,SocketIOClientConfig clientConfig, AbstractBaseListener listener) {
+		super(clientId,clientConfig, listener);
 	}
 
 }

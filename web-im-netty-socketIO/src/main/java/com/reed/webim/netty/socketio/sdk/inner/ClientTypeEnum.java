@@ -7,5 +7,16 @@ package com.reed.webim.netty.socketio.sdk.inner;
  */
 public enum ClientTypeEnum {
 
-	TARGETSERVICE, BROKER;
+	TARGETSERVICE("room-target-services"), BROKER("room-brokers");
+	// client using room's name
+	private String channelName;
+
+	public String getChannelName() {
+		return channelName;
+	}
+
+	private ClientTypeEnum(String channelName) {
+		this.channelName = channelName;
+	}
+
 }

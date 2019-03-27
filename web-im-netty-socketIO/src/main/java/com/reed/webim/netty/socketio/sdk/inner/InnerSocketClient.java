@@ -11,8 +11,8 @@ import com.reed.webim.netty.socketio.sdk.listener.AbstractBaseListener;
  */
 public class InnerSocketClient extends AbstractBaseSocketIOClient {
 
-	public InnerSocketClient(SocketIOClientConfig clientConfig, AbstractBaseListener listener) {
-		super(clientConfig, listener);
+	public InnerSocketClient(String clientId, SocketIOClientConfig clientConfig, AbstractBaseListener listener) {
+		super(clientId, clientConfig, listener);
 	}
 
 }

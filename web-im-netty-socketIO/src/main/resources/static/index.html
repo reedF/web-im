@@ -105,8 +105,12 @@ var socket;
 			msgContent : message
 		};
 		//send msg using ack function
-		socket.emit('messageevent', jsonObject, function(arg1, data) {
-			output('<span class="username-msg">' + arg1 + data.sourceClientId
+		//socket.emit('messageevent', jsonObject, function(arg1, data) {
+		//	output('<span class="username-msg">' + arg1 + data.sourceClientId
+		//			+ ':</span> ' + data.msgContent);
+        //});
+		socket.emit('messageevent', jsonObject, function(data) {
+			output('<span class="username-msg">ACK:' + data.sourceClientId
 					+ ':</span> ' + data.msgContent);
         });
 	}

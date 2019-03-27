@@ -21,4 +21,11 @@ public class InnerSocketIOClientConfig extends SocketIOClientConfig {
 
 	// just for broker or target service using as a client
 	public ClientTypeEnum clientType;
+
+	public InnerSocketIOClientConfig(ClientTypeEnum clientType) {
+		super();
+		this.clientType = clientType;
+		this.channel = clientType.getChannelName();
+	}
+
 }

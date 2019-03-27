@@ -21,7 +21,12 @@ public enum NettySocketIOClientBuilder {
 
 	private volatile static NettySocketIOClient client;
 
-	public NettySocketIOClient buildClient(SocketIOClientConfig config, AbstractBaseListener listener) {
+	public NettySocketIOClient buildClient(String clientId, SocketIOClientConfig config,
+			AbstractBaseListener listener) {
+		if (clientId == null) {
+			log.error("clientId can't be empty.");
+			return null;
+		}
 		if (config == null) {
 			log.error("config can't be empty.");
 			return null;
@@ -35,10 +40,10 @@ public enum NettySocketIOClientBuilder {
 		if (client == null) {
 			// for target service
 			if (config instanceof InnerSocketIOClientConfig) {
-				client = new InnerSocketClient(config, listener);
+				client = new InnerSocketClient(clientId, config, listener);
 			} else {
 				// for open sdk
-				client = new BaseSocketClient(config, listener);
+				client = new BaseSocketClient(clientId, config, listener);
 			}
 		}
 

@@ -18,6 +18,7 @@ import com.corundumstudio.socketio.annotation.OnConnect;
 import com.corundumstudio.socketio.annotation.OnDisconnect;
 import com.corundumstudio.socketio.annotation.OnEvent;
 import com.reed.webim.netty.socketio.pojo.MessageInfo;
+import com.reed.webim.netty.socketio.sdk.inner.ClientTypeEnum;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,9 +36,9 @@ public abstract class BaseAbstractHandler {
 	public final static String ENDPOINT_CLIENT_DISPATCH = "clientdispatch";
 	// rooms
 	// 标识netty borker(server)
-	public final static String ROOM_TAG_BROKER = "room-brokers";
+	public final static String ROOM_TAG_BROKER = ClientTypeEnum.BROKER.getChannelName();// "room-brokers";
 	// 标识后端服务(tagrget service)
-	public final static String ROOM_TAG_SERVICE = "room-target-services";
+	public final static String ROOM_TAG_SERVICE = ClientTypeEnum.TARGETSERVICE.getChannelName();// "room-target-services";
 
 	// local sessions
 	public Map<String, UUID> sessions = new ConcurrentHashMap<>();
@@ -87,7 +88,8 @@ public abstract class BaseAbstractHandler {
 		// check is ack requested by client,but it's not required check
 		if (ackRequest.isAckRequested()) {
 			// send ack response with data to client
-			ackRequest.sendAckData("ACK:", data);
+			// ackRequest.sendAckData("ACK:", data);
+			ackRequest.sendAckData(data);
 		}
 		if (StringUtils.isEmpty(targetClientId)) {
 			sendMsgByBroadcast(client, data);
