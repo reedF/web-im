@@ -96,8 +96,21 @@ public class PublisherMqtt {
 		for (int i = 0; i < 100; i++) {
 			server.message = new MqttMessage();
 			server.message.setQos(2);
+			// 设置保留消息(Retained Message)标志，保留消息(Retained
+			// Message)会驻留在消息服务器，“后来的”订阅者订阅主题时仍可以接收该消息
+			// 即设置为true后，在消息发送之后上线的订阅客户端也会获取到其连接之前的已发送的消息(最近一条)
+			// 关于retain的说明
+			// Mnesia：retained_message
+			// 终端设备publish消息时，如果retain值是true，则服务器会一直记忆，哪怕是服务器重启。因为Mnesia会本地持久化。
+			// 如果服务器接收到终端publish某主题的消息，payload为空且retain值是true，则会删除这条持久化的消息。
+			// 如果服务器接收到终端publish某主题的消息，payload为空且retain值是false，则不会删除这条持久化的消息。
+			// 或在消息服务器设置保留消息的超期时间:https://github.com/emqx/emqx-retainer
 			server.message.setRetained(false);
-			server.message.setPayload(("hello:" + i + " at " + new Date()).getBytes());
+			if (i > 0) {
+				server.message.setPayload(("hello:" + i + " at " + new Date()).getBytes());
+			} else {
+				server.message.setRetained(true);
+			}
 			server.publish(server.topic11, server.message);
 			System.out.println(server.message.isRetained() + "------ratained状态");
 			Thread.sleep(10000);
