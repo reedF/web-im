@@ -2,8 +2,12 @@ package test.webim.mqtt;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -22,7 +26,17 @@ import lombok.extern.slf4j.Slf4j;
  * 
  */
 @Slf4j
+@Getter
+@AllArgsConstructor
 public class PushCallback implements MqttCallbackExtended {
+
+	private MqttClient client;
+
+	private String[] topics;
+
+	private int[] qos;
+
+	private boolean isNeedSub;
 
 	public void connectionLost(Throwable cause) {
 		// 连接丢失后，一般在这里面进行重连
@@ -42,7 +56,14 @@ public class PushCallback implements MqttCallbackExtended {
 
 	@Override
 	public void connectComplete(boolean reconnect, String serverURI) {
-		//配置options.setAutomaticReconnect(true)后会自动重连，但需要在此重新subscribe，否则无法获取消息
+		try {
+			// 配置options.setAutomaticReconnect(true)后会自动重连，但需要在此重新subscribe，否则无法获取消息
+			if (isNeedSub && client != null && client.isConnected()) {
+				client.subscribe(topics, qos);
+			}
+		} catch (MqttException e) {
+			log.error("subcribe error when reconnected:{}", e);
+		}
 		log.info("连接成功：reconnect:{}, server URL:{}", reconnect, serverURI);
 	}
 }
