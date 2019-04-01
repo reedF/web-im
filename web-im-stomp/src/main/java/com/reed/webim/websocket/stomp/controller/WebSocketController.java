@@ -1,5 +1,7 @@
 package com.reed.webim.websocket.stomp.controller;
 
+import java.util.Enumeration;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,75 +31,102 @@ import com.reed.webim.websocket.stomp.message.ToUserMessage;
 @Controller
 public class WebSocketController {
 
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+	@Autowired
+	private SimpMessagingTemplate messagingTemplate;
 
-    @RequestMapping(value = "/login")
-    public String login() {
-        return "login";
-    }
+	@RequestMapping(value = "/login")
+	public String login() {
+		return "login";
+	}
 
-    @RequestMapping(value = "/ws")
-    public String ws() {
-        return "ws";
-    }
+	@RequestMapping(value = "/ws")
+	public String ws() {
+		return "ws";
+	}
 
-    @RequestMapping(value = "/chat")
-    public String chat() {
-        return "chat";
-    }
+	@RequestMapping(value = "/chat")
+	public String chat() {
+		return "chat";
+	}
 
-    /**
-     * for deepstream http auth webhook url
-     * @param auth
-     * @param request
-     * @param response
-     * @return
-     */
-    @RequestMapping(value = "/auth", method = {RequestMethod.POST})
-    @ResponseBody
-    public AuthResponse auth4Deepstream(@RequestBody AuthRequest auth, HttpServletRequest request,
-            HttpServletResponse response) {
-        AuthResponse r = new AuthResponse();
-        if (auth != null && auth.getAuthData() != null) {
-            AuthData d = auth.getAuthData();
-            r.setUsername(d.getUsername());
-            if (d.getUsername() != null) {
-                // check user auth
-                //....
-                // setting extend data
-                r.setClientData(new ClientData());
-                r.setServerData(new ServerData());
-            } else {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            }
-        }
-        return r;
-    }
+	/**
+	 * for deepstream http auth webhook url
+	 * @param auth
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/auth", method = { RequestMethod.POST })
+	@ResponseBody
+	public AuthResponse auth4Deepstream(@RequestBody AuthRequest auth, HttpServletRequest request,
+			HttpServletResponse response) {
+		AuthResponse r = new AuthResponse();
+		if (auth != null && auth.getAuthData() != null) {
+			AuthData d = auth.getAuthData();
+			r.setUsername(d.getUsername());
+			if (d.getUsername() != null) {
+				// check user auth
+				// ....
+				// setting extend data
+				r.setClientData(new ClientData());
+				r.setServerData(new ServerData());
+			} else {
+				response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+			}
+		}
+		return r;
+	}
 
-    @MessageMapping("/welcome")
-    @SendTo("/topic/getResponse")
-    public ServerMessage say(ClientMessage clientMessage) {
-        System.out.println("clientMessage.getName() = " + clientMessage.getName());
-        return new ServerMessage("Welcome , " + clientMessage.getName() + " !");
-    }
+	@MessageMapping("/welcome")
+	@SendTo("/topic/getResponse")
+	public ServerMessage say(ClientMessage clientMessage) {
+		System.out.println("clientMessage.getName() = " + clientMessage.getName());
+		return new ServerMessage("Welcome , " + clientMessage.getName() + " !");
+	}
 
-    @MessageMapping("/cheat")
-    public void cheatTo(ToUserMessage toUserMessage) {
-        System.out.println("toUserMessage.getMessage() = " + toUserMessage.getMessage());
-        System.out.println("toUserMessage.getUserId() = " + toUserMessage.getUserId());
-        messagingTemplate.convertAndSendToUser(toUserMessage.getUserId(), "/message",
-                toUserMessage.getMessage());
-    }
+	@MessageMapping("/cheat")
+	public void cheatTo(ToUserMessage toUserMessage) {
+		System.out.println("toUserMessage.getMessage() = " + toUserMessage.getMessage());
+		System.out.println("toUserMessage.getUserId() = " + toUserMessage.getUserId());
+		messagingTemplate.convertAndSendToUser(toUserMessage.getUserId(), "/message", toUserMessage.getMessage());
+	}
 
-    /**
-     * 等效于cheatTo
-     * @param toUserMessage
-     * @return
-     */
-    @MessageMapping("/p2p")
-    @SendToUser("/message")
-    public ToUserMessage p2p(ToUserMessage toUserMessage) {
-        return toUserMessage;
-    }
+	/**
+	 * 等效于cheatTo
+	 * @param toUserMessage
+	 * @return
+	 */
+	@MessageMapping("/p2p")
+	@SendToUser("/message")
+	public ToUserMessage p2p(ToUserMessage toUserMessage) {
+		return toUserMessage;
+	}
+
+	/**
+	 * auth for MQTT such as EMQ:https://github.com/emqx/emqx-auth-http
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/mqtt/auth", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public AuthResponse auth4MQTT(HttpServletRequest request, HttpServletResponse response) {
+		AuthResponse r = new AuthResponse();
+		Enumeration<String> params = request.getParameterNames();
+		String userName = request.getParameter("username");
+		String pwd = request.getParameter("password");
+		String clientid = request.getParameter("clientid");
+		if (clientid != null) {
+			if (userName != null) {
+				// check user auth
+				// ....
+				// setting extend data
+				r.setClientData(new ClientData());
+				r.setServerData(new ServerData());
+			} else {
+				response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+			}
+		}
+		return r;
+	}
 }

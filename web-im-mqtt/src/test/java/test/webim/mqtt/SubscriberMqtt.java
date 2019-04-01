@@ -47,11 +47,13 @@ public class SubscriberMqtt {
 			String[] topic1 = { TOPIC };
 			// 设置回调
 			client.setCallback(new PushCallback(client, topic1, Qos, true));
+			
+			client.connect(options);
+			
 			MqttTopic topic = client.getTopic(TOPIC);
 			// setWill方法，如果项目中需要知道客户端是否掉线可以调用该方法。设置最终端口的通知消息
 			options.setWill(topic, "close".getBytes(), 2, true);
-
-			client.connect(options);
+			
 			// 订阅消息
 			client.subscribe(topic1, Qos);
 

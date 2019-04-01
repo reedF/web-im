@@ -52,6 +52,7 @@ public class PublisherMqtt {
 	private void connect() {
 		MqttConnectOptions options = new MqttConnectOptions();
 		options.setCleanSession(true);
+		options.setAutomaticReconnect(true);
 		options.setUserName(userName);
 		options.setPassword(passWord.toCharArray());
 		// 设置超时时间

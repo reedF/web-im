@@ -49,6 +49,7 @@ public class PushCallback implements MqttCallbackExtended {
 
 	public void messageArrived(String topic, MqttMessage message) throws Exception {
 		// subscribe后得到的消息会执行到这里面
+		System.out.println("clientID : " + client.getClientId());
 		System.out.println("接收消息主题 : " + topic);
 		System.out.println("接收消息Qos : " + message.getQos());
 		System.out.println("接收消息内容 : " + new String(message.getPayload()));
@@ -58,12 +59,13 @@ public class PushCallback implements MqttCallbackExtended {
 	public void connectComplete(boolean reconnect, String serverURI) {
 		try {
 			// 配置options.setAutomaticReconnect(true)后会自动重连，但需要在此重新subscribe，否则无法获取消息
-			if (isNeedSub && client != null && client.isConnected()) {
+			if (reconnect && isNeedSub && client != null && client.isConnected()) {
 				client.subscribe(topics, qos);
 			}
+			log.info("连接成功：reconnect:{}, server URL:{}", reconnect, serverURI);
 		} catch (MqttException e) {
 			log.error("subcribe error when reconnected:{}", e);
 		}
-		log.info("连接成功：reconnect:{}, server URL:{}", reconnect, serverURI);
+
 	}
 }
