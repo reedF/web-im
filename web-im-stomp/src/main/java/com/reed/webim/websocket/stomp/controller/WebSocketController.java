@@ -116,6 +116,10 @@ public class WebSocketController {
 		String userName = request.getParameter("username");
 		String pwd = request.getParameter("password");
 		String clientid = request.getParameter("clientid");
+		//ACL access 方式，1: 发布 2：订阅 3：发布/订阅,可用于判断是否是acl校验，null表示是auth校验,非空时表示是acl校验
+		String access = request.getParameter("access");
+		String topic = request.getParameter("topic");
+		String ip = request.getParameter("ipaddr");
 		if (clientid != null) {
 			if (userName != null) {
 				// check user auth
@@ -124,7 +128,7 @@ public class WebSocketController {
 				r.setClientData(new ClientData());
 				r.setServerData(new ServerData());
 			} else {
-				response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			}
 		}
 		return r;

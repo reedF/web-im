@@ -102,6 +102,7 @@ public class PublisherMqtt {
 			// 关于retain的说明
 			// Mnesia：retained_message
 			// 终端设备publish消息时，如果retain值是true，则服务器会一直记忆，哪怕是服务器重启。因为Mnesia会本地持久化。
+			// 两种清除方式:
 			// 如果服务器接收到终端publish某主题的消息，payload为空且retain值是true，则会删除这条持久化的消息。
 			// 如果服务器接收到终端publish某主题的消息，payload为空且retain值是false，则不会删除这条持久化的消息。
 			// 或在消息服务器设置保留消息的超期时间:https://github.com/emqx/emqx-retainer
