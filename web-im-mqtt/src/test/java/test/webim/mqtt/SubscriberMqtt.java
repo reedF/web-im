@@ -7,12 +7,16 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttTopic;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
 
 public class SubscriberMqtt {
 
 	public static final String HOST = PublisherMqtt.HOST;
-	public static final String TOPIC = PublisherMqtt.SHARE_TOPIC;
-
+	//broker上的监控client上下线状态主题 topic:"$SYS/brokers/+/clients/+/+"
+	public static final String TOPIC = PublisherMqtt.SHARE_TOPIC;//PublisherMqtt.SHARE_TOPIC;
+	//定义遗愿消息topic
+	public static final String TOPIC_LASTWILL = "lastwill";
+	
 	public static final String clientid = "test-sub";
 	// 分组共享订阅
 	public static final String GROUP_TOPIC = "$share/" + clientid + TOPIC;
@@ -28,6 +32,7 @@ public class SubscriberMqtt {
 		try {
 			// host为主机名，clientid即连接MQTT的客户端ID，一般以唯一标识符表示，MemoryPersistence设置clientid的保存形式，默认为以内存保存
 			client = new MqttClient(HOST, clientid, new MemoryPersistence());
+			//client = new MqttClient(HOST, clientid, new MqttDefaultFilePersistence());
 			// MQTT的连接设置
 			options = new MqttConnectOptions();
 			// 设置是否清空session,即保留会话，设置为false时，那么该客户端上线，并订阅了主题"r"，该主题会一直存在，即使客户端离线，该主题也仍然会记忆在EMQ服务器内存,直到会话超时注销。
@@ -55,7 +60,7 @@ public class SubscriberMqtt {
 
 			client.connect(options);
 
-			MqttTopic topic = client.getTopic(TOPIC);
+			MqttTopic topic = client.getTopic(TOPIC_LASTWILL);
 			// setWill方法，如果项目中需要知道客户端是否掉线可以调用该方法。设置最终端口的通知消息
 			options.setWill(topic, "close".getBytes(), 2, false);
 

@@ -133,4 +133,24 @@ public class WebSocketController {
 		}
 		return r;
 	}
+	
+	/**
+	 * webhook for mqtt,such as EMQ:https://github.com/emqx/emqx-web-hook
+	 * 注：
+	 * 1.需在EMQ中对web-hook插件配置需要的action:"web.hook.rule.*.*",默认开启全部aciton，可以根据需要注释无用的action.
+	 * 2.EMQ UI界面里配置各个aciton的webhook url会导致插件无法启动
+	 * 3.EMQ-3.0.1版的web-hook插件存在bug，开启publish等类型action时，启动插件后会导致pub、sub收发消息失败，
+	 * 具体参见：https://github.com/emqx/emqx-web-hook/issues/93
+	 * EMQ-3.1-beta.2已修复
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/mqtt/webhook", method = { RequestMethod.POST, RequestMethod.GET })
+	@ResponseBody
+	public String webhook4MQTT(@RequestBody String data,HttpServletRequest request, HttpServletResponse response) {
+		
+		System.out.println(data);
+		return data;
+	}
 }
