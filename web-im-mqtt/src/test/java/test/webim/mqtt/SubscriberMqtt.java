@@ -13,7 +13,9 @@ public class SubscriberMqtt {
 
 	public static final String HOST = PublisherMqtt.HOST;
 	//broker上的监控client上下线状态主题 topic:"$SYS/brokers/+/clients/+/+"
-	public static final String TOPIC = PublisherMqtt.SHARE_TOPIC;//PublisherMqtt.SHARE_TOPIC;
+	//注：1.此时订阅$SYS类型topic时，不要使用cleanSession=false,否则会导致无法获取到消息
+	//2.$SYS类型topic在broker acl配置内默认只对本机开放，需配置acl，根据ip或username开放，否则连接会报异常128
+	public static final String TOPIC = PublisherMqtt.TOPIC;//PublisherMqtt.SHARE_TOPIC;//"$SYS/brokers/+/clients/+/+";//PublisherMqtt.TOPIC;
 	//定义遗愿消息topic
 	public static final String TOPIC_LASTWILL = "lastwill";
 	
