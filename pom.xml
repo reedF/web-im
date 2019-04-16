@@ -120,7 +120,7 @@
 							<usedDependencies>
 								<!-- <usedDependency>log4j:log4j</usedDependency> -->
 								<!-- <usedDependency>org.springframework.boot:spring-boot-devtools</usedDependency> -->
-								${required-jar}
+								<!-- ${required-jar} -->
 							</usedDependencies>
 						</configuration>
 					</execution>
