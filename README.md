@@ -20,3 +20,7 @@ https://blog.csdn.net/dumarkee/article/details/84282149
 
 #Redisson
 https://www.jianshu.com/p/2b19dec72ab0  
+
+# MQTT persistence plugin
+https://github.com/reedF/silo
+

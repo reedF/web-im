@@ -15,11 +15,12 @@ public class SubscriberMqtt {
 	//broker上的监控client上下线状态主题 topic:"$SYS/brokers/+/clients/+/+"
 	//注：1.此时订阅$SYS类型topic时，不要使用cleanSession=false,否则会导致无法获取到消息
 	//2.$SYS类型topic在broker acl配置内默认只对本机开放，需配置acl，根据ip或username开放，否则连接会报异常128
-	public static final String TOPIC = PublisherMqtt.TOPIC;//PublisherMqtt.SHARE_TOPIC;//"$SYS/brokers/+/clients/+/+";//PublisherMqtt.TOPIC;
-	//定义遗愿消息topic
-	public static final String TOPIC_LASTWILL = "lastwill";
+	public static final String TOPIC = PublisherMqtt.SHARE_TOPIC;//PublisherMqtt.TOPIC;//PublisherMqtt.SHARE_TOPIC;//"$SYS/brokers/+/clients/+/+";//PublisherMqtt.TOPIC;
 	
-	public static final String clientid = "test-sub";
+	public static final String clientid = "test-sub2";
+	
+	//定义遗愿消息topic
+	public static final String TOPIC_LASTWILL = "client/lastwill/" + clientid;
 	// 分组共享订阅
 	public static final String GROUP_TOPIC = "$share/" + clientid + TOPIC;
 
@@ -43,7 +44,7 @@ public class SubscriberMqtt {
 			// 多用于sub方，且为非共享订阅模式（即sub只订阅某个topic，不使用共享模式标识），不建议在pub方或共享订阅模式下使用，原因：
 			// 因为sub方只订阅自己的topic,在使用"$queue"等标识的共享订阅时，会导致某个sub在离线后，pub发的消息还会路由至已离线的sub作为离线消息等待其恢复上线后接收
 			// 这里如果设置为false表示服务器会保留客户端的连接记录，设置为true表示每次连接到服务器都以新的身份连接
-			options.setCleanSession(false);
+			options.setCleanSession(true);
 			// 设置连接的用户名
 			options.setUserName(userName);
 			// 设置连接的密码
@@ -64,7 +65,8 @@ public class SubscriberMqtt {
 
 			MqttTopic topic = client.getTopic(TOPIC_LASTWILL);
 			// setWill方法，如果项目中需要知道客户端是否掉线可以调用该方法。设置最终端口的通知消息
-			options.setWill(topic, "close".getBytes(), 2, false);
+			String msg = client.getClientId() + "@" + System.currentTimeMillis();
+			options.setWill(topic, msg.getBytes(), 2, false);
 
 			// 订阅消息
 			client.subscribe(topic1, Qos);

@@ -19,7 +19,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 public class PublisherMqtt {
 
 	// tcp://MQTT安装的服务器地址:MQTT定义的端口号
-	public static final String HOST =  "tcp://localhost:1883";//"tcp://nginxhost:21883"
+	public static final String HOST =  "tcp://172.16.32.68:21883";//"tcp://localhost:1883";//"tcp://nginxhost:21883"
 	// 定义一个主题
 	public static final String TOPIC = "test/t1";
 	// 共享订阅topic,注：1.EMQ3集群模式下是否支持?EMQ3.0之后已支持：https://github.com/emqx/emqx/issues/1689
@@ -60,6 +60,7 @@ public class PublisherMqtt {
 			options.setConnectionTimeout(10);
 			// 设置会话心跳时间
 			options.setKeepAliveInterval(20);
+			options.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1);
 			int[] Qos = { 2 };
 			String[] topic = { TOPIC };
 
