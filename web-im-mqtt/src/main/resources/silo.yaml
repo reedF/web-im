@@ -21,7 +21,7 @@ mqtt:
     isGenRandom: true
     password: pwd
     ping_interval: 30
-    topics: ["test/#","$queue/test2/#","$queue/client/lastwill/#"]
+    topics: ["$queue/test/#","$queue/test2/#","$queue/client/lastwill/#"]
     
 
 # engine can be mysql, postgres or monogdb

@@ -31,6 +31,8 @@ public class SiloRunner {
 	private MyMqttClient client;
 
 	private SysConfig sysConfig;
+	
+	private SimpleDispatcher dispatcher;
 
 	@PostConstruct
 	private void start() {
@@ -52,7 +54,7 @@ public class SiloRunner {
 			DatabaseWorkerPool.getInstance(sysConfig);
 
 			client = MyMqttClient.getInstance(sysConfig.mqttConf);
-			SimpleDispatcher dispatcher = new SimpleDispatcher(sysConfig);
+			dispatcher = new SimpleDispatcher(sysConfig);
 			client.setMqttListener(dispatcher);
 			client.tryConnecting();
 			log.info("Silo is running........");
@@ -61,9 +63,10 @@ public class SiloRunner {
 
 	@PreDestroy
 	private void stop() {
-		if (client != null) {
+		if (client != null && client.isConnected()) {
 			client.disconnect();
 		}
+
 		log.info("Silo is stopped......");
 	}
 

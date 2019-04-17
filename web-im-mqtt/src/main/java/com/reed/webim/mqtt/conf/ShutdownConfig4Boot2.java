@@ -1,4 +1,5 @@
 //package com.reed.webim.mqtt.conf;
+//
 //import java.util.concurrent.Executor;
 //import java.util.concurrent.ThreadPoolExecutor;
 //import java.util.concurrent.TimeUnit;
@@ -12,52 +13,37 @@
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
 //import org.springframework.context.event.ContextClosedEvent;
+//
 ///**
 // * Spring Boot2.X Tomcat容器优雅停机
 // *
 // */
 //@Configuration
 //public class ShutdownConfig4Boot2 {
-//    /**
-//     * 用于接受shutdown事件
-//     * @return
-//     */
-//    @Bean
-//    public GracefulShutdown gracefulShutdown() {
-//        return new GracefulShutdown();
-//    }
-//    @Bean
-//    public ServletWebServerFactory servletContainer() {
-//      TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory();
-//      tomcat.addConnectorCustomizers(gracefulShutdown());
-//      return tomcat;
-//    }
-//    private static class GracefulShutdown implements TomcatConnectorCustomizer, ApplicationListener<ContextClosedEvent> {
-//        private static final Logger log = LoggerFactory.getLogger(GracefulShutdown.class);
-//        private volatile Connector connector;
-//        private final int waitTime = 120;
-//        @Override
-//        public void customize(Connector connector) {
-//            this.connector = connector;
-//        }
-//        @Override
-//        public void onApplicationEvent(ContextClosedEvent event) {
-//            this.connector.pause();
-//            Executor executor = this.connector.getProtocolHandler().getExecutor();
-//            if (executor instanceof ThreadPoolExecutor) {
-//                try {
-//                    ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) executor;
-//                    log.info("shutdown start");
-//                    threadPoolExecutor.shutdown();
-//                    log.info("shutdown end");
-//                    if (!threadPoolExecutor.awaitTermination(waitTime, TimeUnit.SECONDS)) {
-//                        log.info("Tomcat 进程在" + waitTime + "秒内无法结束，尝试强制结束");
-//                    }
-//                    log.info("shutdown success");
-//                } catch (InterruptedException ex) {
-//                    Thread.currentThread().interrupt();
-//                }
-//            }
-//        }
-//    }
+//	/**
+//	 * 用于接受shutdown事件
+//	 * @return
+//	 */
+//	@Bean
+//	public GracefulShutdown gracefulShutdown() {
+//		return new GracefulShutdown();
+//	}
+//
+//	@Bean
+//	public ServletWebServerFactory servletContainer() {
+//		TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory();
+//		tomcat.addConnectorCustomizers(gracefulShutdown());
+//		return tomcat;
+//	}
+//
+//	private static class GracefulShutdown extends AbstractGracefulShutdown implements TomcatConnectorCustomizer {
+//		private static final Logger log = LoggerFactory.getLogger(GracefulShutdown.class);
+//		private volatile Connector connector;
+//		private final int waitTime = 120;
+//
+//		@Override
+//		public void customize(Connector connector) {
+//			this.connector = connector;
+//		}
+//	}
 //}
