@@ -16,6 +16,8 @@ mqtt:
     #mqtt server host
     host: 172.16.32.68
     port: 21883
+#    host: localhost
+#    port: 1883
     username: mqtt-manager
     clientId: mqtt-manager
     isGenRandom: true

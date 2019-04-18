@@ -17,7 +17,7 @@ public class SubscriberMqtt {
 	//2.$SYS类型topic在broker acl配置内默认只对本机开放，需配置acl，根据ip或username开放，否则连接会报异常128
 	public static final String TOPIC = PublisherMqtt.SHARE_TOPIC;//PublisherMqtt.TOPIC;//PublisherMqtt.SHARE_TOPIC;//"$SYS/brokers/+/clients/+/+";//PublisherMqtt.TOPIC;
 	
-	public static final String clientid = "test-sub2";
+	public static final String clientid = "test-sub";
 	
 	//定义遗愿消息topic
 	public static final String TOPIC_LASTWILL = "client/lastwill/" + clientid;
