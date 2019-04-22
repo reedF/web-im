@@ -5,11 +5,13 @@ import java.util.Enumeration;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.reed.webim.mqtt.msg.offline.OfflineMsgService;
 import com.reed.webim.mqtt.webhook.EmqWebHookData;
 import com.reed.webim.mqtt.webhook.WebhookConstants;
 
@@ -21,6 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 public class MqttController {
+
+	@Autowired
+	private OfflineMsgService offlineMsgService;
 
 	/**
 	 * auth for MQTT such as EMQ:https://github.com/emqx/emqx-auth-http
@@ -70,17 +75,18 @@ public class MqttController {
 	public EmqWebHookData webhook4MQTT(@RequestBody EmqWebHookData data, HttpServletRequest request,
 			HttpServletResponse response) {
 		if (data != null) {
-			// login
+			long ts = System.currentTimeMillis();
+			// connect
 			if (data.getAction().equals(WebhookConstants.ACTION_CONNECTED)) {
 
 			}
-			// logout
+			// disconnect
 			if (data.getAction().equals(WebhookConstants.ACTION_DISCONNECTED)) {
-
+				offlineMsgService.refreshDisConnectTime(data.getClient_id(), ts);
 			}
 			// sub
 			if (data.getAction().equals(WebhookConstants.ACTION_SUBSCRIBE)) {
-
+				offlineMsgService.getTopicAndResend(data.getTopic(), data.getClient_id(), ts);
 			}
 		}
 		log.info("=======Mqtt web hook data:{}========", data);
