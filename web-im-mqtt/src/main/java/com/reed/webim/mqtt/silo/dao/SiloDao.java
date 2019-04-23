@@ -14,6 +14,7 @@ import com.reed.webim.mqtt.silo.SiloMsg;
 public class SiloDao {
 
 	public static final String TB_SILO = "silo";
+	public static final String TOPIC_LASTWILL = "client/lastwill/";
 
 	@Autowired
 	@Qualifier("siloJdbcTemplate")
@@ -30,5 +31,21 @@ public class SiloDao {
 		sql.append(" and created <= " + end);
 		List<SiloMsg> list = siloJdbcTemplate.query(sql.toString(), new SiloMsg());
 		return list;
+	}
+
+	public Long getClientDisconnectTsByLastWill(String clientId) {
+		Long t = 0l;
+		if (clientId != null && clientId.length() > 0) {
+			String topic = TOPIC_LASTWILL + clientId;
+			StringBuffer sql = new StringBuffer("select * from " + TB_SILO);
+			sql.append(" where topic = '" + topic + "'");
+			sql.append(" order by created desc");
+			sql.append(" limit 0,1");
+			List<SiloMsg> msg = siloJdbcTemplate.query(sql.toString(), new SiloMsg());
+			if (msg != null && !msg.isEmpty()) {
+				t = msg.get(0).getCreated();
+			}
+		}
+		return t;
 	}
 }

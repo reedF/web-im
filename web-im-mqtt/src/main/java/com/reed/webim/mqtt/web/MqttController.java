@@ -67,8 +67,7 @@ public class MqttController {
 	 * 具体参见：https://github.com/emqx/emqx-web-hook/issues/93
 	 * EMQ-3.1-beta.2已修复，但依然不能开启"web.hook.rule.message.delivered"，否则无法发消息
 	 * 4.EMQ UI-plugins界面里配置"Advanced Config"内，可选择特定action，参见：https://github.com/emqx/emqx/issues/2042
-	 * @param request
-	 * @param response
+	 * 5.注：供webhook使用时，内部逻辑必须使用异步模式@EnableAsync，否则会同步处理相关事件，导致mqtt broker响应阻塞延迟
 	 * @return
 	 */
 	@RequestMapping(value = "/mqtt/webhook", method = { RequestMethod.POST, RequestMethod.GET })
@@ -82,10 +81,12 @@ public class MqttController {
 			}
 			// disconnect
 			if (data.getAction().equals(WebhookConstants.ACTION_DISCONNECTED)) {
+				// need @EnableAsync @Async
 				offlineMsgService.refreshDisConnectTime(data.getClient_id(), ts);
 			}
 			// sub
 			if (data.getAction().equals(WebhookConstants.ACTION_SUBSCRIBE)) {
+				// need @EnableAsync @Async
 				offlineMsgService.getTopicAndResend(data.getTopic(), data.getClient_id(), ts);
 			}
 		}
