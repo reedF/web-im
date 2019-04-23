@@ -7,7 +7,11 @@ import java.net.UnknownHostException;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
+import com.reed.webim.mqtt.conf.SpringContextUtil;
 
 import ir.mqtt.silo.client.MyMqttClient;
 import ir.mqtt.silo.conf.SysConfig;
@@ -18,6 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 从MQTT broker持久化消息
+ * 
+ * jar启动时命令：
+ * java -jar target\web-im-mqtt.jar --spring.profiles.active=test
+ * 注：不能使用"-Dspring.profiles.active="，springboot2.X此方式无效
  * @author reed
  *
  */
@@ -26,22 +34,26 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class SiloRunner {
 
-	private static String yamlName = "silo.yaml";
+	private static String PROFILE = "{-profile}";
+	private static String yamlName = "silo" + PROFILE + ".yaml";
+
+	@Autowired
+	private SpringContextUtil contextUtil;
 
 	private MyMqttClient client;
 
 	private SysConfig sysConfig;
-	
+
 	private SimpleDispatcher dispatcher;
 
 	@PostConstruct
 	private void start() {
 		if (client == null) {
 			try {
-				// URI f =
-				// SiloRunner.class.getClassLoader().getResource(yamlName).toURI();
-				URL f = ClassLoader.getSystemResource(yamlName);
-				log.info("=========silo config file:{}===========", f);
+				String fileName = getActiveProfileConfigFile();
+				URL f = Thread.currentThread().getContextClassLoader().getResource(fileName);
+				//URL f = ClassLoader.getSystemResource(fileName);
+				log.info("=========silo config file name:{},url:{}===========", fileName, f);
 				sysConfig = SysConfig.getInstance(f);
 				if (sysConfig != null) {
 					sysConfig.mqttClientId += "-" + getHost();
@@ -78,5 +90,16 @@ public class SiloRunner {
 			log.error("get server host Exception e:", e);
 		}
 		return host;
+	}
+
+	private String getActiveProfileConfigFile() {
+		String s = yamlName;
+		String p = contextUtil.getActiveProfile();
+		if (!StringUtils.isEmpty(p)) {
+			s = s.replace(PROFILE, "-" + p);
+		} else {
+			s = s.replace(PROFILE, "");
+		}
+		return s;
 	}
 }

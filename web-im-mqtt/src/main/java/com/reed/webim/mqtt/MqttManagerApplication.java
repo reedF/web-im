@@ -7,7 +7,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-
+/**
+ * jar启动时命令：
+ * java -jar target\web-im-mqtt.jar --spring.profiles.active=test
+ * 注：不能使用"-Dspring.profiles.active="，springboot2.X此方式无效
+ * @author reed
+ *
+ */
 @SpringBootApplication
 public class MqttManagerApplication {
 
