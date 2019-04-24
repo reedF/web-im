@@ -34,6 +34,6 @@ database:
     username: root1
     password: 123456
     #DB name and add jdbc connection params at the same time,or will throw ex
-    name: emq_silo?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
+    name: emq_silo?autoReconnect=true&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&allowMultiQueries=true&useSSL=false&socketTimeout=60000
 
 
