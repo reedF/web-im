@@ -24,3 +24,13 @@ https://www.jianshu.com/p/2b19dec72ab0
 # MQTT persistence plugin
 https://github.com/reedF/silo
 
+
+# HAproxy
+Docker hub:
+https://hub.docker.com/_/haproxy/  
+1.docker pull haproxy  
+2.
+docker run -d -p 21883:21883 --name haproxy -e LANG=en_US.UTF-8 -v /c/Users/haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg -v /c/Users/haproxy/haproxy_mqtt.lua:/usr/local/etc/haproxy/haproxy_mqtt.lua  -v /c/Users/haproxy/mqtt.lua:/usr/local/etc/haproxy/mqtt.lua --net host haproxy:latest
+
+3.
+
