@@ -24,6 +24,14 @@ https://www.jianshu.com/p/2b19dec72ab0
 # MQTT persistence plugin
 https://github.com/reedF/silo
 
+# MQTT nginx using njs as LB
+1.使用njs时，njs-0.2.4之后API变化，
+https://github.com/nginx/njs/issues/148  
+http://nginx.org/en/docs/njs/changes.html#njs0.2.4  
+以下API或属性无效：
+s.fromUpstream,s.buffer ,s.OK, s.ABORT, s.AGAIN, s.DECLINED, s.ERROR  
+新代码mqtt.js可参考：https://github.com/dusanb94/mainflux/blob/5cf7bb459a183823014d8aaf8764a3c400aef160/docker/ssl/authorization.js
+
 
 # HAproxy
 Docker hub:

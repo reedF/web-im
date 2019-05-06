@@ -1,3 +1,5 @@
+// 注njs-0.2.4之后API变化，以下代码s.fromUpstream,s.buffer ,s.OK, s.ABORT, s.AGAIN, s.DECLINED, s.ERROR无效：http://nginx.org/en/docs/njs/changes.html#njs0.2.4
+// 新代码参考：https://github.com/dusanb94/mainflux/blob/5cf7bb459a183823014d8aaf8764a3c400aef160/docker/ssl/authorization.js
 var client_messages = 1;
 var client_id_str = "-";
 function getClientId(s) {
