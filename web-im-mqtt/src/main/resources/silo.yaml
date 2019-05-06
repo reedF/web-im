@@ -14,12 +14,12 @@ bulk:
 # mqtt server information to connect
 mqtt:
     #mqtt server host
-    host: 172.16.32.68
+    host: 192.168.59.103
     port: 21883
 #    host: localhost
 #    port: 1883
-    username: mqtt-manager
-    clientId: mqtt-manager
+    username: mqtt-manager-silo
+    clientId: mqtt-manager-silo
     isGenRandom: true
     password: pwd
     ping_interval: 30

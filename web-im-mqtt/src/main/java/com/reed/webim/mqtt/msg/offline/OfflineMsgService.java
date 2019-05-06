@@ -43,6 +43,24 @@ public class OfflineMsgService {
 	private RedisTemplate<String, Long> clientTsTemplate;
 
 	/**
+	 * check auth for silo
+	 * @param userName
+	 * @param pwd
+	 * @return
+	 */
+	public boolean checkAuthForSilo(String userName, String pwd) {
+		boolean r = true;
+		if (userName != null && pwd != null && siloRunner.getSysConfig() != null) {
+			if (userName.equals(siloRunner.getSysConfig().mqttUsername)) {
+				if (!pwd.equals(siloRunner.getSysConfig().mqttPassword)) {
+					r = false;
+				}
+			}
+		}
+		return r;
+	}
+
+	/**
 	 * 获取最近一次断开连接时间
 	 * @param clientId
 	 * @return

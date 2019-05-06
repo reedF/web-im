@@ -18,8 +18,8 @@ mqtt:
     port: 21883
 #    host: localhost
 #    port: 1883
-    username: mqtt-manager
-    clientId: mqtt-manager
+    username: mqtt-manager-silo
+    clientId: mqtt-manager-silo
     isGenRandom: true
     password: pwd
     ping_interval: 30

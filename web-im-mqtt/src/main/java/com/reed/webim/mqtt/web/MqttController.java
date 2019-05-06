@@ -49,12 +49,17 @@ public class MqttController {
 			if (userName != null) {
 				// check user auth
 				// ....
-				// setting extend data
+				// check silo self
+				if (!offlineMsgService.checkAuthForSilo(userName, pwd)) {
+					response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+				}
 
 			} else {
 				response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			}
 		}
+		log.info("=======Mqtt auth clientId:{},user:{},access:{},topic:{},ip:{}========", clientid, userName, access,
+				topic, ip);
 		return r;
 	}
 
