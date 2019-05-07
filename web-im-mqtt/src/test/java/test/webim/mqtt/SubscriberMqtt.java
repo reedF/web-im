@@ -55,6 +55,7 @@ public class SubscriberMqtt {
 			options.setKeepAliveInterval(20);
 			// 是否自动重连
 			options.setAutomaticReconnect(true);
+			options.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1);
 
 			int[] Qos = { 2 };
 			String[] topic1 = { TOPIC };

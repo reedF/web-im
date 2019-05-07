@@ -105,7 +105,7 @@ public class OfflineMsgService {
 			if (!topic.contains(MultiSubs[0]) && !topic.contains(MultiSubs[1])) {
 				// sleep for sub can get msg
 				try {
-					Thread.sleep(3000);
+					Thread.sleep(300);
 				} catch (InterruptedException e) {
 					log.error("=====resend offline msg error for sleep=======", e);
 				}
