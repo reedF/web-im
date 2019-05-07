@@ -30,7 +30,8 @@ https://github.com/nginx/njs/issues/148
 http://nginx.org/en/docs/njs/changes.html#njs0.2.4  
 以下API或属性无效：
 s.fromUpstream,s.buffer ,s.OK, s.ABORT, s.AGAIN, s.DECLINED, s.ERROR  
-新代码mqtt.js可参考：https://github.com/dusanb94/mainflux/blob/5cf7bb459a183823014d8aaf8764a3c400aef160/docker/ssl/authorization.js
+新代码mqtt.js可参考：https://github.com/dusanb94/mainflux/blob/5cf7bb459a183823014d8aaf8764a3c400aef160/docker/ssl/authorization.js  
+本地实现：https://github.com/reedF/web-im/blob/master/web-im-mqtt/src/test/resources/mqtt-new.js
 
 
 # HAproxy
