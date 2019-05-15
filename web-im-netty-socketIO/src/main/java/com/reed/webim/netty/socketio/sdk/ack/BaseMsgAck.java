@@ -1,7 +1,6 @@
 package com.reed.webim.netty.socketio.sdk.ack;
 
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.FutureTask;
 
@@ -22,7 +21,7 @@ public abstract class BaseMsgAck implements Ack, Callable<Boolean> {
 
 	public final MessageInfo msg;
 
-	private volatile Boolean flag = false;
+	private Boolean flag = false;
 
 	private FutureTask<Boolean> result = new FutureTask<>(this);
 
@@ -34,18 +33,14 @@ public abstract class BaseMsgAck implements Ack, Callable<Boolean> {
 	}
 
 	public void waitAck() {
-		try {
-			flag = true;
-			executors.submit(result);
-			log.info("ACK-from-server:result status has done or not: {},result is {},msg is {}", result.isDone(),
-					result.get(), msg);
-		} catch (InterruptedException | ExecutionException e) {
-			log.error("=====Ack FutureTask error=====", e);
-		}
+		//log.info("ACK-from-server0:future task has done: {},result is {},msg is {}", result.isDone(), flag,msg);
+		executors.submit(result);
+		log.info("ACK-from-server:future task has done: {},result is {},msg is {}", result.isDone(), flag,msg);
 	}
 
 	@Override
 	public Boolean call() throws Exception {
+		flag = true;
 		return flag;
 	}
 
