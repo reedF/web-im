@@ -36,15 +36,20 @@ public class TestSdkClient {
 
 		for (int i = 0; i < 100; i++) {
 			Future<Boolean> r = client.sendMsg(BaseAbstractHandler.ENDPOINT_P2P, msg, true);
-			printInfo(r);
-			System.out.println("---wait for some time---");
-			Thread.sleep(3000);
-			printInfo(r);
+			System.out.println(new Date() + "---status0 is " + r.isDone());
+			System.out.println("---wait for Future.get---");
+			// Future.get()方法会阻塞当前线程执行，直到Future complete才会继续后续操作
+			System.out.println(new Date() + "---result is " + r.get());
+			System.out.println(new Date() + "---status1 is " + r.isDone());
+			System.out.println("--------------------------------------");
+			// printInfo(r);
 			Thread.sleep(1000);
 		}
 	}
 
 	public static void printInfo(Future<Boolean> r) throws InterruptedException, ExecutionException {
-		System.out.println(new Date() + "---status is " + r.isDone() + "---result is " + r.get());
+		// Future.get()方法会阻塞当前线程执行，直到Future complete才会继续后续操作
+		System.out.println(new Date() + "---status0 is " + r.isDone() + "---result is " + r.get() + "--- status1 is "
+				+ r.isDone());
 	}
 }
