@@ -1,5 +1,7 @@
 package com.reed.webim.netty.socketio.sdk.ack;
 
+import java.util.concurrent.ExecutorService;
+
 import org.json.JSONObject;
 
 import com.alibaba.fastjson.JSON;
@@ -15,8 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MsgSenderAck extends BaseMsgAck {
 
-	public MsgSenderAck(MessageInfo msg) {
-		super(msg);
+	public MsgSenderAck(MessageInfo msg, ExecutorService es) {
+		super(msg, es);
 	}
 
 	/**
@@ -30,10 +32,9 @@ public class MsgSenderAck extends BaseMsgAck {
 			if (obj instanceof JSONObject) {
 				JSONObject json = (JSONObject) obj;
 				if (msg.equals(JSON.parseObject(json.toString(), MessageInfo.class))) {
-					result = true;
+					waitAck();
 				}
-			}
-			log.info("ACK-from-server:result is {},msg is {}", result, obj);
+			}			
 		}
 	}
 

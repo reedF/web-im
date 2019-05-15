@@ -1,5 +1,7 @@
 package com.reed.webim.netty.socketio.sdk;
 
+import java.util.concurrent.Future;
+
 import com.reed.webim.netty.socketio.pojo.MessageInfo;
 
 import io.socket.client.Socket;
@@ -37,5 +39,5 @@ public interface NettySocketIOClient {
 	 * @param isAck
 	 * @return
 	 */
-	boolean sendMsg(final String endPoint, final MessageInfo msg, final boolean isAck);
+	Future<Boolean> sendMsg(final String endPoint, final MessageInfo msg, final boolean isAck);
 }

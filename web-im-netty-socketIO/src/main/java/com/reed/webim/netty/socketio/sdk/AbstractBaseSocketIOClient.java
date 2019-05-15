@@ -1,6 +1,10 @@
 package com.reed.webim.netty.socketio.sdk;
 
 import java.net.URISyntaxException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.springframework.util.StringUtils;
 
@@ -27,6 +31,8 @@ public abstract class AbstractBaseSocketIOClient implements NettySocketIOClient 
 
 	private Socket socket;
 
+	private ExecutorService threadPool = Executors.newFixedThreadPool(10);
+
 	public AbstractBaseSocketIOClient(String clientId, SocketIOClientConfig clientConfig,
 			AbstractBaseListener listener) {
 		this.clientId = clientId;
@@ -45,21 +51,23 @@ public abstract class AbstractBaseSocketIOClient implements NettySocketIOClient 
 		if (socket != null) {
 			socket.close();
 		}
+		if (threadPool != null && !threadPool.isShutdown()) {
+			threadPool.shutdown();
+		}
 	}
 
-	//TODO 返回值r在isAck=true时，由于ack由异步线程执行，ack.isResult()在当前线程内获取的值存在延迟，导致r取值错误
+	// 注：返回值r在isAck=true时，由于ack由异步线程执行，ack.result在当前线程内获取的值存在延迟，如使用同步方式获取结果会导致r取值错误，需使用异步方式
 	@Override
-	public boolean sendMsg(String endPoint, MessageInfo msg, boolean isAck) {
-		boolean r = false;
+	public Future<Boolean> sendMsg(String endPoint, MessageInfo msg, boolean isAck) {
+		Future<Boolean> r = CompletableFuture.completedFuture(true);
 		if (msg != null) {
 			// send msg,and ack from server
 			if (isAck) {
-				BaseMsgAck ack = new MsgSenderAck(msg);
+				BaseMsgAck ack = new MsgSenderAck(msg, threadPool);
 				socket.emit(endPoint, JSON.toJSON(msg), ack);
-				r = ack.isResult();
+				r = ack.getResult();
 			} else {
 				socket.emit(endPoint, JSON.toJSON(msg));
-				r = true;
 			}
 		}
 		return r;
